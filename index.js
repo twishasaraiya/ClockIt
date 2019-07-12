@@ -1,4 +1,7 @@
 const CONTAINER = $(".container");
+const LIGHT_GREY = "#D7DBDC";
+const DARK_GREY = "#A3A6A7";
+const AUDIO = $('audio')[0];
 
 // Keep track whether it is 12/24 hour clock
 var isampm = true;
@@ -24,7 +27,7 @@ function getTime() {
 }
 
 /**
-  add zero in front of numbers < 10
+  prepend 0 to numbers < 10
 **/
 function appendZero(i) {
   if (i < 10) {
@@ -36,7 +39,7 @@ function appendZero(i) {
 the display the time
 **/
 function display() {
-  console.log("[display]");
+  //console.log("[display]");
   var { hours, mins, secs } = getTime();
   if (isAnalog()) {
     // do not show format button for analog clock
@@ -61,23 +64,38 @@ function display() {
   }
 }
 
+/**
+      Modal dialog box
+      populate options with values as per format
+**/
+function populateModal(){
+  //add options in alarm
+  addOption($("#hpick").empty(), isampm ? 12 : 23);
+  addOption($("#mpick").empty(), 60);
+  addOption($("#spick").empty(), 60);
+}
+
 
 /**
 Add x option elements to given select
 **/
 function addOption(element, x) {
-  for (var i = 1; i <= x; i++) {
+  for (var i = 0; i <= x; i++) {
     element.append(`<option value='${i}'> ${i} </option>`);
   }
 }
+
+
+var handle;
 
 $(document).ready(() => {
   //start the clock
   setInterval(display, 1000);
 
-  /**
-    SWITCH BETWEEN ANALOG AND DIGITAL CLOCK
-  **/
+  //populate the alarm dialog box
+  populateModal();
+
+  //switch between analog and digital clock
   $("#switch").on("click", evt => {
     //check if it is analog or digital
     if (isAnalog()) {
@@ -91,14 +109,17 @@ $(document).ready(() => {
     }
   });
 
-  /**
-      CHANGE DIGITAL CLOCK FORMAT
-  **/
+    // change the time format in digital clock
     $('#format').on('click',evt=>{
       isampm = isampm? false:true;
       console.log('change format',isampm);
+      // toggle the AM/PM field as per format
       $('.modal #ampm').toggle();
+
+      //populate the select fields when time format changes
+      populateModal();
     })
+
 
   /**
     ALARM
@@ -111,14 +132,8 @@ $(document).ready(() => {
     <option value="PM">PM</option>
     </select>`);
   }
-  //add options in alarm
-  addOption($("#hpick"), isampm ? 12 : 23);
-  addOption($("#mpick"), 60);
-  addOption($("#spick"), 60);
-
 
   $("#alarm").on("click", evt => {
-
     // display the dialog box
     $(".modal").css("display", "block");
   });
@@ -149,26 +164,38 @@ $(document).ready(() => {
     // remove the dialog box from screen
     $(".modal").css("display", "none");
 
+    AUDIO.loop = true;
     // check if we have reached the alarm time
-    setInterval(handle => {
-      let { hours, mins, secs } = getTime();
-      var session = "";
-      if(isampm) {
-        session = hours < 12 ? "AM" : "PM";
-        hours = hours % 12 || 12;
-       }
-      console.log("[comparing]", hours, mins, secs, session);
-      console.log(h, m, s, ampm);
-      if (hours == h && mins == m && secs == s) {
-        clearInterval(handle);
-        $("audio")[0].play();
-      }
-    }, 1000);
+    handle = setInterval(playAlarm, 1000,h,m,s,ampm);
 
-    console.log("audio element", $("audio"));
   });
+
 });
 
+
+$(document).on("click", "#dismiss_alarm", function() {
+    console.log('Dismiss alarm', this, handle);
+    clearInterval(handle);
+    AUDIO.pause();
+    $(this).remove();
+});
+
+
+
+function playAlarm(h,m,s,ampm){
+    let { hours, mins, secs } = getTime();
+    var session = "";
+    if(isampm) {
+      session = hours < 12 ? "AM" : "PM";
+      hours = hours % 12 || 12;
+     }
+    //console.log("[comparing]", hours, mins, secs, session);
+    //console.log(h, m, s, ampm);
+    if (hours == h && mins == m && secs == s && (isampm? (session == ampm): true) ) {
+      AUDIO.play();
+      $('.button-container').append(`<button type="button" id="dismiss_alarm">Dismiss</button>`);
+    }
+}
 /**
 ANALOG CLOCK
 **/
@@ -179,35 +206,18 @@ function drawClock(hours, mins, secs) {
 
   // add style to canvas elements
   $(canvas).css({
-    'margin-left': 'auto',
+    'margin-left': '38%',
     'margin-right': 'auto',
     'width': '50%',
     'height': '80%'
   })
 
-  var ctx = canvas.getContext("2d");
+  var ctx =canvas.getContext("2d");
   var radius = canvas.height / 2;
   ctx.translate(radius, radius);
   radius = radius * 0.9;
 
-  // draw the CIRCLE
-  ctx.arc(0, 0, radius, 0, 2 * Math.PI);
-  ctx.fillStyle = "#fff";
-  ctx.fill();
-
-  ctx.lineWidth = 2;
-  ctx.stroke();
-
-  // draw two circle at center
-  ctx.beginPath();
-  ctx.arc(0, 0, radius * 0.12, 0, 2 * Math.PI);
-  ctx.fillStyle = '#ccc';
-  ctx.fill()
-
-  ctx.beginPath();
-  ctx.arc(0, 0, radius * 0.1, 0, 2 * Math.PI);
-  ctx.fillStyle = '#fff';
-  ctx.fill()
+  drawCircle(ctx,radius);
 
   // draw numbers of the clock
   drawNumbers(ctx,radius);
@@ -220,17 +230,39 @@ function drawClock(hours, mins, secs) {
     (secs * Math.PI) / (360 * 60);
 
 
-  ctx.strokeStyle = '#ccf';
-  drawHand(ctx, hours, radius * 0.5, radius * 0.07);
+  ctx.strokeStyle = DARK_GREY;
+  drawHand(ctx, hours, radius * 0.5, radius * 0.03);
   //minute
   mins = (mins * Math.PI) / 30 + (secs * Math.PI) / (30 * 60);
-  drawHand(ctx, mins, radius * 0.8, radius * 0.07);
+  drawHand(ctx, mins, radius * 0.7, radius * 0.03);
   // second
   secs = (secs * Math.PI) / 30;
-  drawHand(ctx, secs, radius * 0.9, radius * 0.02);
+  drawHand(ctx, secs, radius * 0.9, radius * 0.01);
 
   //mount the canvas on DOM
   CONTAINER.html(canvas);
+}
+
+
+/**
+    draw circle
+**/
+function drawCircle(ctx,radius){
+
+  ctx.save();
+
+  ctx.shadowBlur = 2;
+  ctx.shadowOffsetX = 3;
+  ctx.shadowOffsetY = 0;
+  ctx.shadowColor = DARK_GREY;
+
+  // draw main circle of light grey color with dark grey shadow
+  ctx.arc(0, 0, radius, 0, 2 * Math.PI);
+  ctx.fillStyle = LIGHT_GREY;
+  ctx.fill();
+
+  // to remove the shadow
+  ctx.restore();
 }
 
 function drawNumbers(ctx, radius) {

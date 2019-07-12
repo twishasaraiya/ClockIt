@@ -1,6 +1,6 @@
 body{
   margin: 0px;
-  background: #8fd5d5;
+  background: #96C6D3;
 }
 
 /**
@@ -26,8 +26,19 @@ button{
   color: #fff;
   border: 0px;
   font-size: 15px;
-  border-radius: 3px;
+  border-radius: 20px;
   cursor: pointer;
+}
+
+#set_alarm{
+  margin-top: 25px;
+}
+button:hover{
+  animation: animate 500ms ease-in-out;
+}
+
+button:focus{
+  outline: none;
 }
 
 #format{
@@ -47,13 +58,6 @@ button{
   font-size: 90pt;
   font-weight: bolder;
   color: #fff;
-}
-#canvas{
-    margin-left: auto;
-    margin-right: auto;
-    width: 50%;
-    padding-left: 1em;
-    height: 50%;
 }
 
 
@@ -83,6 +87,7 @@ button{
   margin: auto;
   padding: 20px;
   border: 1px solid #888;
+  border-radius: 10px;
   width: 40%;
 }
 
@@ -91,7 +96,7 @@ button{
   position: relative;
   color: #aaaaaa;
   top: -.5em;
-  right: -7em;
+  right: -6em;
   font-size: 2em;
   font-weight: bold;
 }
@@ -105,7 +110,7 @@ button{
 
 
 /**
-SELECTE DROP DOWN LIST
+SELECT DROP DOWN LIST
 **/
 
 select{
@@ -120,8 +125,25 @@ select{
 
 select:hover, :active{
   border-bottom: 3px solid #8fd5d5;
+  border-right: 3px solid #8fd5d5;
 }
 
 select:focus{
   outline: none;
+}
+
+
+/**
+    ANIMATION
+**/
+@keyframes animate{
+  0%{
+    transform: scale(0.9);
+  },
+  20%{
+    transform: scale(1.5);
+  },
+  100%{
+    transform: scale(1);
+  }
 }
