@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8" />
+    <title>Clock it</title>
+    <link href="index.css" rel="stylesheet" />
+  </head>
+  <body>
+    <!-- Clock container -->
+    <div class="container analog"></div>
+
+    <!-- buttons -->
+    <div class="button-container">
+      <button type="button" id="switch">Switch</button>
+      <button type="button" id="alarm">Set an alarm</button>
+      <button type="button" id="format"></button>
+    </div>
+
+    <!-- alarm modal dialog box -->
+    <div class="modal">
+      <div class="modal-content">
+        <select name="hpickpadding-right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
+    padding-left: 0;
+    height: 50%;
+}" id="hpick"></select>
+        <select name="mpick" id="mpick"></select>
+        <select name="spick" id="spick"></select>
+        <span class="close">&times;</span>
+        <button type="button" id="set_alarm">Set</button>
+      </div>
+    </div>
+
+    <!-- -->
+    <audio src="analog-watch-alarm.mp3"></audio>
+  </body>
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+  <script src="index.js"></script>
+</html>
