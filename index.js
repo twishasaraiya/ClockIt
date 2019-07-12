@@ -80,7 +80,7 @@ function populateModal(){
 Add x option elements to given select
 **/
 function addOption(element, x) {
-  for (var i = 0; i <= x; i++) {
+  for (var i = isampm? 1: 0; i <= x; i++) {
     element.append(`<option value='${i}'> ${i} </option>`);
   }
 }
