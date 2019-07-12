@@ -157,8 +157,8 @@ $(document).ready(() => {
       .text();
     var alarmTime = `${h}:${m}:${s} ${ampm}`;
 
-    console.log(isampm, ampm);
-    console.log("SET ALARM FOR ", alarmTime, typeof alarmTime);
+    //console.log(isampm, ampm);
+    //console.log("SET ALARM FOR ", alarmTime, typeof alarmTime);
 
 
     // remove the dialog box from screen
@@ -174,7 +174,7 @@ $(document).ready(() => {
 
 
 $(document).on("click", "#dismiss_alarm", function() {
-    console.log('Dismiss alarm', this, handle);
+    console.log('Dismiss alarm');
     clearInterval(handle);
     AUDIO.pause();
     $(this).remove();
