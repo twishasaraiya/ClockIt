@@ -4,7 +4,7 @@ const DARK_GREY = "#A3A6A7";
 const AUDIO = $('audio')[0];
 
 // Keep track whether it is 12/24 hour clock
-var isampm = true;
+var isAmPm = true;
 
 /**
   return true if the current clock is analog
@@ -48,7 +48,7 @@ function display() {
   } else {
     // display format button for digital clock
     $('#format').css('display','block')
-    if (isampm) {
+    if (isAmPm) {
       $('#format').text('24 hour');
       var session = hours < 12 ? "AM" : "PM";
       hours = hours % 12 || 12;
@@ -59,7 +59,7 @@ function display() {
     hours = appendZero(hours);
     mins = appendZero(mins);
     secs = appendZero(secs);
-    var currentTime = `${hours}:${mins}:${secs} ${isampm ? session : ""}`;
+    var currentTime = `${hours}:${mins}:${secs} ${isAmPm ? session : ""}`;
     CONTAINER.text(currentTime);
   }
 }
@@ -70,7 +70,7 @@ function display() {
 **/
 function populateModal(){
   //add options in alarm
-  addOption($("#hpick").empty(), isampm ? 12 : 23);
+  addOption($("#hpick").empty(), isAmPm ? 12 : 23);
   addOption($("#mpick").empty(), 60);
   addOption($("#spick").empty(), 60);
 }
@@ -80,7 +80,7 @@ function populateModal(){
 Add x option elements to given select
 **/
 function addOption(element, x) {
-  for (var i = isampm? 1: 0; i <= x; i++) {
+  for (var i = isAmPm? 1: 0; i <= x; i++) {
     element.append(`<option value='${i}'> ${i} </option>`);
   }
 }
@@ -111,8 +111,8 @@ $(document).ready(() => {
 
     // change the time format in digital clock
     $('#format').on('click',evt=>{
-      isampm = isampm? false:true;
-      console.log('change format',isampm);
+      isAmPm = isAmPm? false:true;
+      console.log('change format',isAmPm);
       // toggle the AM/PM field as per format
       $('.modal #ampm').toggle();
 
@@ -126,7 +126,7 @@ $(document).ready(() => {
   **/
 
   // add AM/PM option
-  if (isampm) {
+  if (isAmPm) {
     $("#set_alarm").before(`<select name="ampm" id="ampm">
     <option value="AM">AM</option>
     <option value="PM">PM</option>
@@ -157,7 +157,7 @@ $(document).ready(() => {
       .text();
     var alarmTime = `${h}:${m}:${s} ${ampm}`;
 
-    //console.log(isampm, ampm);
+    //console.log(isAmPm, ampm);
     //console.log("SET ALARM FOR ", alarmTime, typeof alarmTime);
 
 
@@ -185,13 +185,13 @@ $(document).on("click", "#dismiss_alarm", function() {
 function playAlarm(h,m,s,ampm){
     let { hours, mins, secs } = getTime();
     var session = "";
-    if(isampm) {
+    if(isAmPm) {
       session = hours < 12 ? "AM" : "PM";
       hours = hours % 12 || 12;
      }
     //console.log("[comparing]", hours, mins, secs, session);
     //console.log(h, m, s, ampm);
-    if (hours == h && mins == m && secs == s && (isampm? (session == ampm): true) ) {
+    if (hours == h && mins == m && secs == s && (isAmPm? (session == ampm): true) ) {
       AUDIO.play();
       $('.button-container').append(`<button type="button" id="dismiss_alarm">Dismiss</button>`);
     }
